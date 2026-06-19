@@ -44,12 +44,20 @@ classifier = LlmAgent(
 )
 
 
-def router(node_input: dict):
+from google.adk.agents.context import Context
+
+
+def router(ctx: Context, node_input: dict):
     category = node_input.get("category", "unrelated")
     # If the LLM generates a slightly different string, default to unrelated
     if category.lower() not in ["shipping", "unrelated"]:
         category = "unrelated"
-    return Event(output=node_input, branch=category.lower())
+
+    # Pass the user's latest message to the next node
+    user_prompt = ""
+    if ctx.user_content and ctx.user_content.parts:
+        user_prompt = ctx.user_content.parts[0].text
+    return Event(output=user_prompt, route=category.lower())
 
 
 faq_agent = LlmAgent(
@@ -75,12 +83,22 @@ def decline(node_input: dict):
     yield Event(output=msg)
 
 
+def extract_text(node_input: types.Content) -> str:
+    print("EXTRACT TEXT INPUT:", node_input)
+    if not node_input or not node_input.parts:
+        return "ERROR: No parts"
+    return node_input.parts[0].text
+
 root_agent = Workflow(
     name="customer_support",
     edges=[
         ("START", classifier),
         (classifier, router),
-        (router, {"shipping": faq_agent, "unrelated": decline}),
+        (router, {
+            "shipping": faq_agent,
+            "__DEFAULT__": decline
+        }),
+        (faq_agent, extract_text)
     ],
     description="Customer support agent for a shipping company.",
 )
