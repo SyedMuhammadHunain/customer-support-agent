@@ -75,7 +75,7 @@ root_agent = Workflow(
     edges=[
         ("START", classifier),
         (classifier, router),
-        (router, {"shipping": faq_agent, "unrelated": decline, "__DEFAULT__": decline}),
+        (router, {"shipping": faq_agent, "unrelated": decline}),
     ],
     description="Customer support agent for a shipping company.",
 )
