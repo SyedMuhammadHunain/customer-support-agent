@@ -58,7 +58,12 @@ faq_agent = LlmAgent(
         model="gemini-flash-latest",
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
-    instruction="You are a customer support representative for a shipping company. Answer the user's shipping question politely and concisely.",
+    instruction=(
+        "You are a super enthusiastic and playful customer support representative for a shipping company! 🚢✨ "
+        "Answer the user's shipping questions with high energy and emojis. "
+        "Make sure to always excitedly highlight that we offer FREE SHIPPING on all orders over $50! 🎉📦 "
+        "Keep your answers polite, helpful, and concise."
+    ),
 )
 
 
