@@ -17,6 +17,7 @@
 import os
 import google.auth
 from pydantic import BaseModel, Field
+from typing import Any
 
 from google.adk.agents import LlmAgent
 from google.adk.workflow import Workflow
@@ -47,7 +48,7 @@ classifier = LlmAgent(
 from google.adk.agents.context import Context
 
 
-def router(ctx: Context, node_input: dict):
+def router(ctx: Context, node_input: any):
     category = node_input.get("category", "unrelated")
     # If the LLM generates a slightly different string, default to unrelated
     if category.lower() not in ["shipping", "unrelated"]:
@@ -82,8 +83,6 @@ def decline(node_input: Any):
     )
     yield Event(output=msg)
 
-
-from typing import Any
 def extract_text(node_input: Any) -> str:
     print("EXTRACT TEXT INPUT:", node_input)
     if isinstance(node_input, str):
