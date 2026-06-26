@@ -36,7 +36,7 @@ class ClassificationOutput(BaseModel):
 classifier = LlmAgent(
     name="classifier",
     model=Gemini(
-        model="gemini-flash-latest",
+        model="gemini-flash-lite-latest",
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
     instruction="Classify if the user query is related to shipping (rates, tracking, delivery, returns) or unrelated. Output 'shipping' if related, 'unrelated' otherwise.",
@@ -63,7 +63,7 @@ def router(ctx: Context, node_input: dict):
 faq_agent = LlmAgent(
     name="faq_agent",
     model=Gemini(
-        model="gemini-flash-latest",
+        model="gemini-flash-lite-latest",
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
     instruction=(
@@ -83,11 +83,14 @@ def decline(node_input: dict):
     yield Event(output=msg)
 
 
-def extract_text(node_input: types.Content) -> str:
+from typing import Any
+def extract_text(node_input: Any) -> str:
     print("EXTRACT TEXT INPUT:", node_input)
-    if not node_input or not node_input.parts:
-        return "ERROR: No parts"
-    return node_input.parts[0].text
+    if isinstance(node_input, str):
+        return node_input
+    if hasattr(node_input, "parts") and node_input.parts:
+        return node_input.parts[0].text
+    return str(node_input)
 
 root_agent = Workflow(
     name="customer_support",
