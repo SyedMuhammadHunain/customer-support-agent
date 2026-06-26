@@ -48,7 +48,7 @@ classifier = LlmAgent(
 from google.adk.agents.context import Context
 
 
-def router(ctx: Context, node_input: any):
+def router(ctx: Context, node_input: Any):
     category = node_input.get("category", "unrelated")
     # If the LLM generates a slightly different string, default to unrelated
     if category.lower() not in ["shipping", "unrelated"]:
