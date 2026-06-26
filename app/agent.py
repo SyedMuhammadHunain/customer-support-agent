@@ -75,7 +75,7 @@ faq_agent = LlmAgent(
 )
 
 
-def decline(node_input: dict):
+def decline(node_input: Any):
     msg = "I'm sorry, I can only help with shipping-related queries like rates, tracking, delivery, or returns."
     yield Event(
         content=types.Content(role="model", parts=[types.Part.from_text(text=msg)])
